@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- ===== 安全策略：CSP =====
+     白名单模式：默认全禁，逐项放开。
+     script-src 里唯一的内联脚本（主题初始化）通过 sha256 哈希放行，其余内联脚本一律拦截。
+     若修改了下方主题初始化 <script> 的内容，必须重新计算哈希（见 README.md），否则主题会失效。 -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self' 'sha256-Ku8IDA+xIx/PG0vE8HY2P27GpbvFMGOhN9PkhlVY9EU='; font-src 'self'; connect-src 'self'; manifest-src 'self'" />
+
+<!-- 不向外部站点泄露来源 URL -->
+<meta name="referrer" content="no-referrer" />
+
+<title>崇虔斋 · 个人主页</title>
+<meta name="description" content="崇虔斋 —— 代码、游戏与碎碎念。一个普通人的个人主页。" />
+<meta property="og:title" content="崇虔斋 · 个人主页" />
+<meta property="og:description" content="代码、游戏与碎碎念。" />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏯</text></svg>" />
+
+<!-- 样式 -->
+<link rel="stylesheet" href="css/script.css" />
+
+<!--
+  主题初始化：必须内联 + 放在最前面执行。
+  如果把它挪到 script.js 里，页面会先按默认深色渲染再切换，
+  出现明显的“闪白/闪黑”现象。
+-->
+<script>
+  // 提前决定主题，避免刷新时闪白
+  (function () {
+    try {
+      let t = localStorage.getItem('theme');
+      if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch (e) {}
+    document.documentElement.classList.add('js');
+  })();
+</script>
+</head>
+
+<body>
+<div class="bg"><span></span><span></span><span></span></div>
+
+<!-- 导航 -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">崇虔<span>斋</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">关于</a></li>
+      <li><a href="#works">作品</a></li>
+      <li><a href="#notes">随笔</a></li>
+      <li><a href="#contact">联系</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-btn" id="themeBtn" aria-label="切换主题">🌙</button>
+      <button class="menu-btn" id="menuBtn" aria-label="打开菜单">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="badge">🏯 欢迎来到崇虔斋</div>
+    <h1>你好，我是<span class="grad">斋主</span></h1>
+    <p class="lead">
+      一个喜欢写代码、打游戏、偶尔胡思乱想的人。<br />
+      在这里记录我做的东西，和想说的话。
+    </p>
+    <div class="btns">
+      <a class="btn primary" href="#works">看看我的作品 →</a>
+      <a class="btn ghost" href="#contact">联系我</a>
+    </div>
+  </section>
+
+  <!-- 关于 -->
+  <section class="section reveal" id="about">
+    <h2 class="section-title">关于我</h2>
+    <p class="section-sub">随便写点自我介绍，让别人快速认识你。</p>
+    <div class="about">
+      <p>
+        我是 <strong>斋主</strong>，目前在做前端开发 / 独立开发 / 游戏相关的折腾。
+        平时喜欢把想法做成能跑起来的东西，哪怕很小。
+      </p>
+      <p>
+        这个站点是我的自留地，用来放作品、笔记和一些不成熟的思考。
+        如果你对其中任何内容感兴趣，欢迎随时找我聊聊。
+      </p>
+      <div class="tags">
+        <span class="tag">JavaScript</span>
+        <span class="tag">TypeScript</span>
+        <span class="tag">Vue / React</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">独立开发</span>
+        <span class="tag">游戏</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 作品 -->
+  <section class="section reveal" id="works">
+    <h2 class="section-title">作品</h2>
+    <p class="section-sub">做过的一些小东西。</p>
+    <div class="grid">
+      <article class="card">
+        <div class="card-icon">🎮</div>
+        <h3>项目名称一</h3>
+        <p>一句话说清楚它是什么、解决了什么问题。别写太长，两行以内最好。</p>
+        <a class="card-link" href="#">查看详情 →</a>
+      </article>
+      <article class="card">
+        <div class="card-icon">🛠️</div>
+        <h3>项目名称二</h3>
+        <p>可以放一个开源仓库、一个小工具、或者一次有意思的实验。</p>
+        <a class="card-link" href="#">查看详情 →</a>
+      </article>
+      <article class="card">
+        <div class="card-icon">📦</div>
+        <h3>项目名称三</h3>
+        <p>数量不用多，三个足够。质量比数量重要，挑你最满意的放上来。</p>
+        <a class="card-link" href="#">查看详情 →</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- 随笔 -->
+  <section class="section reveal" id="notes">
+    <h2 class="section-title">随笔</h2>
+    <p class="section-sub">想到什么写什么，不必正经。</p>
+    <ul class="notes">
+      <li><time>2026-09-01</time><a href="#">第一篇文章：为什么我要建这个站</a></li>
+      <li><time>2026-08-20</time><a href="#">踩坑记录：一个折腾了三小时的小问题</a></li>
+      <li><time>2026-08-05</time><a href="#">最近在玩什么、看什么</a></li>
+    </ul>
+  </section>
+
+  <!-- 联系 -->
+  <section class="section reveal" id="contact">
+    <h2 class="section-title">联系我</h2>
+    <p class="section-sub">欢迎交流，随时找我。</p>
+    <div class="btns">
+      <a class="btn primary" href="mailto:hi@chongqianzhai.com">hi@chongqianzhai.com</a>
+      <a class="btn ghost" href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn ghost" href="https://space.bilibili.com/" target="_blank" rel="noopener">Bilibili</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p>版权所有© <span id="year"></span> 崇虔斋 · chongqianzhai.com</p>
+</footer>
+
+<script src="js/style.js" defer></script>
+</body>
+</html>
