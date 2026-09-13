@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 手机端适配：禁止用户缩放，保证满屏效果 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>全平台视频播放</title>
+    <style>
+        /* 1. 页面全局样式：去除滚动条，背景纯黑 */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden; /* 防止手机端上下滑动 */
+        }
+
+        /* 2. 视频容器铺满全屏 */
+        .video-box {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 3. 视频满屏显示 */
+        video {
+            width: 100%;
+            height: 100%;
+            /* 保持比例填满屏幕，多余部分裁剪 */
+            object-fit: cover;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="video-box">
+    <!--
+      关键属性说明（决定手机能否播放）：
+      controls：显示控制条（必须要有，否则无法全屏）
+      autoplay：自动播放
+      muted：静音（手机浏览器极度严格，必须静音才能自动播放）
+      loop：循环播放
+      playsinline：iOS 关键属性！让视频在网页内播放，而不是一播放就强制全屏
+      webkit-playsinline：兼容老版本苹果系统的内联播放
+      x5-playsinline：兼容微信/QQ浏览器的内联播放
+    -->
+    <video controls autoplay muted loop playsinline webkit-playsinline x5-playsinline>
+
+        <!-- 视频源路径，请确保路径正确 -->
+        <source src="Vidoe/Love%20Pop-up.mp4" type="video/mp4">
+
+        您的浏览器不支持 HTML5 视频。
+    </video>
+</div>
+
+</body>
+</html>
