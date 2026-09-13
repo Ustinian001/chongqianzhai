@@ -1,0 +1,8 @@
+# 允许主流搜索引擎抓取（展示站通常希望被收录）
+User-agent: *
+Allow: /
+
+# 若存在不想被抓的内部路径，逐个禁止（示例）：
+# User-agent: *
+# Disallow: /assets/src/
+# Disallow: /draft/
