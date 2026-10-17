@@ -96,10 +96,19 @@ body {
 /* ---------- Hero ---------- */
 .hero { max-width: 1080px; margin: 0 auto; padding: 108px 20px 84px; }
 .badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 7px 16px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 18px; border-radius: 999px;
   border: 1px solid var(--border); background: var(--card);
-  font-size: .85rem; color: var(--muted); margin-bottom: 26px;
+  font-size: .95rem; color: var(--muted); margin-bottom: 26px;
+}
+/* 徽章里的小图标 */
+.badge-icon {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 3px;
 }
 .hero h1 {
   margin: 0;
