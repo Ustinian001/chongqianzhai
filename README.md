@@ -78,6 +78,28 @@ openssl dgst -sha384 -binary htmx.min.js | openssl base64 -A
 # 输出前加 sha384- 前缀，拼进 integrity
 ```
 
+## 前端防护（右键 / F12 / 另存图片）
+
+`js/style.js` 与 `css/script.css` 里加了一层「劝退级」防护：
+
+| 目标 | 实现 |
+|---|---|
+| 右键菜单（含「图片另存为」） | `contextmenu` 事件 `preventDefault()` |
+| 拖拽图片到桌面 | `dragstart` 拦截 + CSS `-webkit-user-drag: none` |
+| 选中复制文字/图片 | CSS `user-select: none` + `selectstart` 拦截 |
+| F12、Ctrl+Shift+I/J/C/K | `keydown` 拦截（捕获阶段） |
+| Ctrl+U 查看源码、Ctrl+S 保存网页 | `keydown` 拦截 |
+
+**必须说明：这些都不能真正阻止别人查看源码或下载图片。**
+
+- 页面源码和图片本来就要下载到浏览器，`view-source:`、`curl`、抓包、禁用 JS、
+  开发者工具菜单、换一个浏览器都能绕过；
+- GitHub Pages 是公开静态托管，`img/cqzlogo.png` 可以直接用 URL 拿到（6 MB 原图）；
+- 拦截快捷键只是拦浏览器的默认行为，不是拦浏览器。
+
+真想保护图片，只能让「拿到了也不划算」：加显水印、只发布缩小后的低分辨率版本、
+或者压根不放原图。要真正挡住访问必须上服务端鉴权，GitHub Pages 做不到。
+
 ## 验证
 
 ```bash

@@ -41,6 +41,22 @@ body {
   transition: background .35s ease, color .35s ease;
 }
 
+/* ---------- 基础防护：禁止选中文字 / 拖拽图片 ----------
+   只是提高门槛，挡不住真正想拿源码或原图的人，见 README「前端防护」。 */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
 /* ---------- 背景光斑 ---------- */
 .bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .bg span {
