@@ -34,7 +34,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-               "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -147,7 +147,7 @@ img {
   font-size: .95rem; font-weight: 600; text-decoration: none;
   border: 1px solid transparent;
   transition: transform .2s ease, box-shadow .25s ease,
-              background .25s ease, border-color .25s ease;
+  background .25s ease, border-color .25s ease;
 }
 .btn.primary {
   background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -170,6 +170,25 @@ img {
 }
 .section-sub { margin: 0 0 34px; color: var(--muted); font-size: .93rem; }
 
+/* ===== 崇虔斋简介链接样式（渐变色文字） ===== */
+.intro-link {
+  display: inline-block;
+  margin-left: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; /* 让文字透明，露出背景的渐变色 */
+  text-decoration: none;
+  font-weight: 700; /* 渐变字稍微加粗一点更好看 */
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.intro-link:hover {
+  opacity: 0.8; /* 鼠标悬停时稍微变淡一点，代替下划线效果 */
+  transform: translateX(3px); /* 向右轻轻移动 */
+}
+/* =================================== */
+
 /* ---------- 关于 ---------- */
 .about p { margin: 0 0 14px; max-width: 700px; color: var(--muted); font-size: .98rem; }
 .about strong { color: var(--text); font-weight: 600; }
@@ -191,7 +210,7 @@ img {
   background: var(--card); border: 1px solid var(--border);
   backdrop-filter: blur(8px);
   transition: transform .28s ease, background .28s ease,
-              border-color .28s ease, box-shadow .28s ease;
+  border-color .28s ease, box-shadow .28s ease;
 }
 .card:hover {
   transform: translateY(-4px);
@@ -229,7 +248,7 @@ img {
 .js .reveal {
   opacity: 0; transform: translateY(24px);
   transition: opacity .7s cubic-bezier(.2, .7, .3, 1),
-              transform .7s cubic-bezier(.2, .7, .3, 1);
+  transform .7s cubic-bezier(.2, .7, .3, 1);
 }
 .js .reveal.visible { opacity: 1; transform: none; }
 

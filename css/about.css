@@ -1,0 +1,118 @@
+/* ---------- 简介页面专属排版样式 ---------- */
+
+.hero-intro {
+    padding: 100px 20px 40px;
+    text-align: center;
+}
+.hero-intro h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 16px;
+}
+
+/* 通用大图样式 */
+.content-image {
+    display: block;
+    width: 100%;
+    max-width: 800px; /* 限制最大宽度，防止图片过大 */
+    height: auto;
+    margin: 20px auto 40px auto; /* 居中，下方留出间距 */
+    border-radius: 16px; /* 圆角与卡片统一 */
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3); /* 增加一点阴影凸显层次 */
+    object-fit: cover;
+}
+[data-theme="light"] .content-image {
+    box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.1);
+}
+
+/* 核心真言大字展示 */
+.mantra-box {
+    text-align: center;
+    padding: 50px 20px;
+    margin: 40px 0;
+    background: var(--card);
+    border-radius: 24px;
+    border: 1px dashed var(--border);
+    position: relative;
+    overflow: hidden;
+}
+.mantra-box::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    opacity: 0.05; z-index: 0;
+}
+.mantra-text {
+    position: relative; z-index: 1;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1.8;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* 四字释义网格 */
+.intro-grid {
+    display: grid; gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: 24px;
+}
+.intro-card {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 24px; border-radius: 16px;
+    transition: transform .3s ease, border-color .3s ease;
+}
+.intro-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-soft);
+}
+.intro-card h4 {
+    margin: 0 0 12px 0;
+    font-size: 1.2rem;
+    color: var(--accent);
+}
+.intro-card p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* 引用块样式 */
+.quote-block {
+    border-left: 4px solid var(--accent);
+    padding: 20px 24px;
+    background: var(--card);
+    border-radius: 0 12px 12px 0;
+    margin: 30px 0;
+    font-style: italic;
+    color: var(--muted);
+}
+.quote-block strong {
+    color: var(--text);
+}
+
+/* 列表样式优化 */
+.concept-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+.concept-list li {
+    margin-bottom: 18px;
+    padding-left: 24px;
+    position: relative;
+    color: var(--muted);
+    line-height: 1.7;
+}
+.concept-list li::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--accent2);
+}
+.concept-list strong {
+    color: var(--text);
+    margin-right: 8px;
+}

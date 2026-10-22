@@ -1,52 +1,61 @@
 (function () {
-  // 年份
+  // 1. 自动更新页脚年份
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  // 主题切换
+  // 2. 主题切换（白天/黑夜）与本地存储同步
   const root = document.documentElement;
   const themeBtn = document.getElementById('themeBtn');
 
   function syncThemeIcon() {
     if (!themeBtn) return;
+    // 根据当前的 data-theme 属性设置按钮图标
     themeBtn.textContent = root.getAttribute('data-theme') === 'light' ? '☀️' : '🌙';
   }
+
+  // 页面加载时同步一次图标
   syncThemeIcon();
 
   if (themeBtn) {
     themeBtn.addEventListener('click', function () {
+      // 判断当前主题并取反
       const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      // 更新 HTML 属性
       root.setAttribute('data-theme', next);
+      // 存入浏览器本地存储（关键：实现跨页面同步）
       try { localStorage.setItem('theme', next); } catch (e) {}
+      // 更新按钮图标
       syncThemeIcon();
     });
   }
 
-  // 移动端菜单
+  // 3. 移动端菜单折叠/展开
   const menuBtn = document.getElementById('menuBtn');
   const navLinks = document.getElementById('navLinks');
   if (menuBtn && navLinks) {
     menuBtn.addEventListener('click', function () {
       navLinks.classList.toggle('open');
     });
+    // 点击菜单里的链接后，自动收起菜单
     navLinks.addEventListener('click', function (e) {
       if (e.target.tagName === 'A') navLinks.classList.remove('open');
     });
   }
 
-  // 滚动出现
+  // 4. 滚动出现动画（IntersectionObserver）
   const items = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          io.unobserve(entry.target);
+          io.unobserve(entry.target); // 动画执行一次后停止观察，提升性能
         }
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     items.forEach(function (el) { io.observe(el); });
   } else {
+    // 兼容不支持 IntersectionObserver 的旧浏览器
     items.forEach(function (el) { el.classList.add('visible'); });
   }
 })();

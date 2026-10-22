@@ -1,62 +1,41 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="dark">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- ===== 安全策略：CSP =====
-     白名单模式：默认全禁，逐项放开。
-     script-src 里唯一的内联脚本（主题初始化）通过 sha256 哈希放行，其余内联脚本一律拦截。
-     若修改了下方主题初始化 <script> 的内容，必须重新计算哈希（见 README.md），否则主题会失效。 -->
-<meta http-equiv="Content-Security-Policy"
-      content="default-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self' 'sha256-Ku8IDA+xIx/PG0vE8HY2P27GpbvFMGOhN9PkhlVY9EU='; font-src 'self'; connect-src 'self'; manifest-src 'self'" />
+  <!-- 安全策略：移除了内联脚本的哈希限制，因为已全部抽离为外部文件 -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'" />
 
-<!-- 不向外部站点泄露来源 URL -->
-<meta name="referrer" content="no-referrer" />
+  <meta name="referrer" content="no-referrer" />
 
-<title>崇虔斋 · 个人主页</title>
-<meta name="description" content="崇虔斋 —— 代码与碎碎念。一个普通人的个人主页。" />
-<meta property="og:title" content="崇虔斋 · 个人主页" />
-<meta property="og:description" content="代码与碎碎念。" />
-<meta property="og:type" content="website" />
-<!-- 站点图标（favicon）：由 img/cqzlogo.png 生成，.ico 兼容老浏览器与搜索引擎 -->
-<link rel="icon" href="img/favicon.ico" sizes="48x48" />
-<link rel="icon" type="image/png" href="img/favicon-96.png" sizes="96x96" />
-<link rel="icon" type="image/png" href="img/favicon-192.png" sizes="192x192" />
-<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
+  <title>崇虔斋 · 个人主页</title>
+  <meta name="description" content="崇虔斋 —— 代码与碎碎念。一个普通人的个人主页。" />
+  <meta property="og:title" content="崇虔斋 · 个人主页" />
+  <meta property="og:description" content="代码与碎碎念。" />
+  <meta property="og:type" content="website" />
 
-<!-- 样式 -->
-<link rel="stylesheet" href="css/script.css" />
+  <link rel="icon" href="img/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" href="img/favicon-96.png" sizes="96x96" />
+  <link rel="icon" type="image/png" href="img/favicon-192.png" sizes="192x192" />
+  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
 
-<!--
-  主题初始化：必须内联 + 放在最前面执行。
-  如果把它挪到 script.js 里，页面会先按默认深色渲染再切换，
-  出现明显的“闪白/闪黑”现象。
--->
-<script>
-  // 提前决定主题，避免刷新时闪白
-  (function () {
-    try {
-      let t = localStorage.getItem('theme');
-      if (!t) t = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', t);
-    } catch (e) {}
-    document.documentElement.classList.add('js');
-  })();
-</script>
+  <link rel="stylesheet" href="css/script.css" />
+
+  <!-- 提前决定主题，避免刷新时闪白（必须无 defer 且在 head 中） -->
+  <script src="js/theme-init.js"></script>
 </head>
 
 <body>
 <div class="bg"><span></span><span></span><span></span></div>
 
-<!-- 导航 -->
 <header class="nav">
   <div class="nav-inner">
     <a href="#top" class="brand">崇虔<span>斋</span></a>
     <ul class="nav-links" id="navLinks">
       <li><a href="#about">关于</a></li>
       <li><a href="#works">作品</a></li>
-      <!--<li><a href="#notes">随笔</a></li>-->
       <li><a href="#contact">联系</a></li>
     </ul>
     <div class="nav-actions">
@@ -67,7 +46,6 @@
 </header>
 
 <main>
-  <!-- Hero -->
   <section class="hero" id="top">
     <div class="badge"><img src="img/cqzlogo.png" alt="印章" class="badge-icon" />欢迎来到崇虔斋</div>
     <h1>你好，我是<span class="grad">斋主</span></h1>
@@ -81,10 +59,12 @@
     </div>
   </section>
 
-  <!-- 关于 -->
   <section class="section reveal" id="about">
     <h2 class="section-title">关于我</h2>
-    <p class="section-sub">随便写点自我介绍，让别人快速认识你。</p>
+    <p class="section-sub">
+      一个崇尚专注与纯粹的个人数字自留地。
+      <a href="about.html" class="intro-link">崇虔斋简介 &rarr;</a>
+    </p>
     <div class="about">
       <p>
         我是 <strong>斋主</strong>，目前在做前端开发 / 独立开发 / 移动应用开发相关的折腾。
@@ -107,19 +87,10 @@
     </div>
   </section>
 
-  <!-- 作品 -->
   <section class="section reveal" id="works">
     <h2 class="section-title">作品</h2>
     <p class="section-sub">做过的一些小东西。</p>
     <div class="grid">
-      <!--<article class="card">
-        <div class="card-icon">🛠️</div>
-        <h3>项目一</h3>
-        <h3>个人网站</h3>
-        <p>一个轻量的个人网站项目，用于展示作品和记录想法。</p>
-        <a class="card-link" href="https://www.chongqianzhai.com/">查看网站详情 →</a>
-      </article>
-      -->
       <article class="card">
         <div class="card-icon">🛠️</div>
         <h3>项目一</h3>
@@ -169,20 +140,6 @@
     </div>
   </section>
 
-  <!-- 随笔 -->
-  <!--
-  <section class="section reveal" id="notes">
-    <h2 class="section-title">随笔</h2>
-    <p class="section-sub">想到什么写什么，不必正经。</p>
-    <ul class="notes">
-      <li><time>2026-09-01</time><a href="#">第一篇文章：为什么我要建这个站</a></li>
-      <li><time>2026-08-20</time><a href="#">踩坑记录：一个折腾了三小时的小问题</a></li>
-      <li><time>2026-08-05</time><a href="#">最近在玩什么、看什么</a></li>
-    </ul>
-  </section>
-  -->
-
-  <!-- 联系 -->
   <section class="section reveal" id="contact">
     <h2 class="section-title">联系我</h2>
     <p class="section-sub">欢迎交流，随时找我。</p>
