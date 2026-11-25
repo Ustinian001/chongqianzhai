@@ -1,23 +1,45 @@
 # 安全加固说明（纯静态站 · GitHub Pages）
 
 本目录是「无登录/注册」的纯静态展示站，部署在 GitHub Pages，无后端、无数据库、
-无表单、无上传、无 API。安全加固主要通过 `index.html` 的 CSP meta 标签实现。
+无表单、无上传、无 API。安全加固主要通过各页面的 CSP meta 标签实现。
 
 ## 文件清单
 
-| 文件 | 作用 |
+| 文件 / 目录 | 作用 |
 |---|---|
-| `index.html` | 核心页面，含 CSP meta + Referrer-Policy |
+| `index.html` | 主页：CSP meta、Referrer-Policy、主题入口、作品卡片与本页视频弹窗 |
+| `about.html` | 崇虔斋简介页：引用公共样式、简介专属样式与交互脚本 |
+| `404.html` | 极简错误页；样式与脚本内联，CSP 单独放行 `unsafe-inline` |
+| `css/script.css` | 全站公共样式：背景光晕、玻璃材质、导航、卡片、视频弹窗、移动端菜单动画 |
+| `css/about.css` | 简介页专属排版样式 |
+| `js/theme-init.js` | 首帧前同步执行的主题初始化（读本地存储 / 系统偏好，写 `data-theme`，避免刷新闪白） |
+| `js/style.js` | 主页交互：页脚年份、主题切换、移动端抽屉菜单、滚动出现动画、前端防护、视频弹窗 |
+| `js/about.js` | 简介页交互：页脚年份、主题切换、抽屉菜单、滚动出现动画、前端防护 |
+| `img/` | 站点图标（favicon 系列、apple-touch-icon）与页面图片素材 |
+| `Vidoe/` | 主页三个演示视频（mp4；目录名沿用历史拼写 `Vidoe`） |
 | `robots.txt` | 控制爬虫抓取（君子协定，非强防） |
-| `.gitignore` | 防止误提交密钥/敏感文件 |
-| `404.html` | 极简错误页，不泄露内部结构 |
+| `CNAME` | 自定义域名 `www.chongqianzhai.com` |
+| `.gitignore` | 防止误提交密钥 / 敏感文件 |
+
+> `.idea/`、`.openidea/` 是本机 IDE 配置，不属于站点发布内容。
+
+## 页面与交互
+
+- **深浅主题**：`js/theme-init.js` 在首帧前按本地存储（无记录时按系统偏好）设定主题；
+  `style.js` / `about.js` 里的按钮切换主题并写回 localStorage，跨页面同步。
+- **移动端菜单**：窄屏右上角按钮展开抽屉面板；点链接、点遮罩空白处、按 Esc、
+  滚动或滑动背景都会收起。
+- **本页视频弹窗**：主页作品卡片上的「查看效果详情」按钮在当前页弹窗播放
+  `Vidoe/` 下的 mp4，不跳转独立页面。
+- **滚动出现动画**：区块进入视口时淡入上移，只执行一次。
+- **前端防护**：见下文「前端防护」一节。
 
 ## 部署
 
 ```bash
 git init
 git add .
-git commit -m "harden: add CSP meta, robots.txt, .gitignore, 404"
+git commit -m "harden: CSP meta, robots.txt, .gitignore, 404"
 git branch -M main
 git remote add origin https://github.com/你的用户名/你的仓库.git
 git push -u origin main
@@ -25,33 +47,31 @@ git push -u origin main
 
 再到 **GitHub 仓库 → Settings → Pages**：
 1. 发布源选 `main` 分支、`/ (root)`。
-2. 自定义域名时填域名并打开 **Enforce HTTPS**。
+2. 自定义域名填 `www.chongqianzhai.com` 并打开 **Enforce HTTPS**。
 
-## CSP 变体
+## CSP 现状
 
-### 实际使用的 CSP（含主题内联脚本哈希）
+脚本已全部抽为外部文件，`script-src 'self'` 即可，不再需要内联脚本哈希。
 
-`index.html` 里有一个**必须内联**的主题初始化脚本（避免刷新闪白），所以不能简单用
-"禁内联"。实际策略是：`script-src` 用 `sha256-...` 哈希**只放行这一个内联脚本**，
-其余内联脚本/样式一律拦截。
+### 主页 / 简介页实际策略
+
+`index.html`（含 `media-src 'self'`，放行自托管视频）：
 
 ```
-default-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self' 'sha256-Ku8IDA+xIx/PG0vE8HY2P27GpbvFMGOhN9PkhlVY9EU='; font-src 'self'; connect-src 'self'; manifest-src 'self'
+default-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; object-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'
 ```
 
-> ⚠️ 若你改了 `index.html` 里那个主题初始化 `<script>` 的内容（哪怕加一个空格/换行），
-> 哈希就会失效，主题会被 CSP 拦截。改完必须用下面命令重算并更新哈希：
+`about.html` 不加载视频，策略同上但不含 `media-src`。
 
-```bash
-# 在站点根目录执行（提取 <script> 到 </script> 之间的内容算 sha256）
-{ printf '\n'; awk '/<script>/{flag=1; next} /<\/script>/{flag=0} flag' index.html | tr -d '\r'; } \
-  | openssl dgst -sha256 -binary | openssl base64 -A
-# 把输出拼成 'sha256-<结果>'，替换 index.html 里的哈希
+### 404 页特例
+
+`404.html` 把样式和脚本写在页面内联，策略单独放行内联：
+
+```
+default-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; script-src 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:
 ```
 
-> 更省心的替代方案：把主题初始化挪到外部文件 `js/theme.js`，用 `<script src="js/theme.js"></script>`
-> 同步加载（不加 defer/async，仍会在首帧前执行、同样避免闪白），然后 CSP 就可用纯
-> `script-src 'self'`，彻底摆脱"改脚本要重算哈希"的麻烦。
+若以后把 404 的内联样式 / 脚本也抽成外部文件，即可去掉两处 `unsafe-inline`。
 
 ### Variant B（需引入第三方脚本时）
 
@@ -80,13 +100,14 @@ openssl dgst -sha384 -binary htmx.min.js | openssl base64 -A
 
 ## 前端防护（右键 / F12 / 另存图片）
 
-`js/style.js` 与 `css/script.css` 里加了一层「劝退级」防护：
+拦截事件在 `js/style.js` 与 `js/about.js` 末尾的防护 IIFE；选中 / 拖拽相关样式在
+`css/script.css`。
 
 | 目标 | 实现 |
 |---|---|
 | 右键菜单（含「图片另存为」） | `contextmenu` 事件 `preventDefault()` |
 | 拖拽图片到桌面 | `dragstart` 拦截 + CSS `-webkit-user-drag: none` |
-| 选中复制文字/图片 | CSS `user-select: none` + `selectstart` 拦截 |
+| 选中复制文字 / 图片 | CSS `user-select: none` + `selectstart` 拦截 |
 | F12、Ctrl+Shift+I/J/C/K | `keydown` 拦截（捕获阶段） |
 | Ctrl+U 查看源码、Ctrl+S 保存网页 | `keydown` 拦截 |
 
@@ -94,7 +115,9 @@ openssl dgst -sha384 -binary htmx.min.js | openssl base64 -A
 
 - 页面源码和图片本来就要下载到浏览器，`view-source:`、`curl`、抓包、禁用 JS、
   开发者工具菜单、换一个浏览器都能绕过；
-- GitHub Pages 是公开静态托管，`img/cqzlogo.png` 可以直接用 URL 拿到（6 MB 原图）；
+- GitHub Pages 是公开静态托管，`img/cqzlogo.png`（约 5.7 MB）、`img/cqsflogo.png`
+  （约 5.8 MB）原图可以直接用 URL 拿到；`Vidoe/` 下的演示视频体积也偏大，
+  如需减重可后续压缩转码；
 - 拦截快捷键只是拦浏览器的默认行为，不是拦浏览器。
 
 真想保护图片，只能让「拿到了也不划算」：加显水印、只发布缩小后的低分辨率版本、
@@ -104,13 +127,13 @@ openssl dgst -sha384 -binary htmx.min.js | openssl base64 -A
 
 ```bash
 # 看 GitHub Pages 返回的响应头（只有平台默认头，无自定义安全头，属正常）
-curl -sI https://你的用户名.github.io/你的仓库/
+curl -sI https://www.chongqianzhai.com/
 
 # 确认 HTML 里带 CSP meta
-curl -s https://你的用户名.github.io/你的仓库/ | grep -i "Content-Security-Policy"
+curl -s https://www.chongqianzhai.com/ | grep -i "Content-Security-Policy"
 
 # 确认 HTTP 自动跳 HTTPS
-curl -sI http://你的用户名.github.io/你的仓库/ | grep -iE "HTTP/|location"
+curl -sI http://www.chongqianzhai.com/ | grep -iE "HTTP/|location"
 ```
 
 浏览器负向测试：临时在 `index.html` 里加一行 `<script>alert(1)</script>`，
@@ -130,7 +153,7 @@ Console 应报 `Refused to execute inline script ... violates ... Content-Securi
 > 因此 Observatory / securityheaders.com 对裸 GitHub Pages 站得分不高（C~D），
 > 这是平台限制，不是配置错误。
 
-## 人工配置（把评分拉到 A+，需在 CDN/服务器/账号侧完成）
+## 人工配置（把评分拉到 A+，需在 CDN / 服务器 / 账号侧完成）
 
 1. **Cloudflare 前置**：自定义域名走 Cloudflare DNS 代理，加一条修改响应头规则：
    ```text
@@ -139,7 +162,7 @@ Console 应报 `Refused to execute inline script ... violates ... Content-Securi
    X-Frame-Options: DENY
    Referrer-Policy: no-referrer
    Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
-   Content-Security-Policy: default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'
+   Content-Security-Policy: default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; manifest-src 'self'
    ```
    （响应头版 CSP 可以加 `frame-ancestors 'none'`，补上点击劫持防护）
 
@@ -149,7 +172,7 @@ Console 应报 `Refused to execute inline script ... violates ... Content-Securi
 5. 域名注册商开 **域名锁 + 续费保护**；DNS 侧开 **DNSSEC**。
 6. 定期复查第三方依赖与 CDN 脚本版本是否有已知漏洞。
 
-## 不适用项（因无后端/无数据库/无表单/无上传）
+## 不适用项（因无后端 / 无数据库 / 无表单 / 无上传）
 
 CSRF、CORS、SQL/NoSQL 注入、命令/模板注入、限流、文件上传、SSRF、开放重定向、
 错误处理泄露——这些依赖服务端，纯静态站不适用；将来加后端时再单独补。

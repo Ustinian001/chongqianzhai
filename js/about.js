@@ -29,17 +29,56 @@
         });
     }
 
-    // 3. 移动端菜单折叠/展开
+    // 3. 移动端菜单：从按钮流出 / 收回按钮
     const menuBtn = document.getElementById('menuBtn');
     const navLinks = document.getElementById('navLinks');
+    const navMask = document.getElementById('navMask');
     if (menuBtn && navLinks) {
-        menuBtn.addEventListener('click', function () {
-            navLinks.classList.toggle('open');
+        const menuGlyph = menuBtn.querySelector('.menu-glyph');
+
+        function closeMenu() {
+            navLinks.classList.remove('open');
+            menuBtn.classList.remove('open');
+            if (navMask) navMask.classList.remove('show');
+            if (menuGlyph) menuGlyph.textContent = '☰';
+            menuBtn.setAttribute('aria-label', '打开菜单');
+        }
+        function openMenu() {
+            navLinks.classList.add('open');
+            menuBtn.classList.add('open');
+            if (navMask) navMask.classList.add('show');
+            if (menuGlyph) menuGlyph.textContent = '✕';
+            menuBtn.setAttribute('aria-label', '关闭菜单');
+        }
+
+        menuBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (navLinks.classList.contains('open')) closeMenu(); else openMenu();
         });
-        // 点击菜单里的链接后，自动收起菜单
+        // 点击菜单里的链接后，自动收回菜单
         navLinks.addEventListener('click', function (e) {
-            if (e.target.tagName === 'A') navLinks.classList.remove('open');
+            if (e.target.tagName === 'A') closeMenu();
         });
+        // 点遮罩（菜单外区域）即收起
+        if (navMask) navMask.addEventListener('click', closeMenu);
+        // 兜底：点击菜单外部或按 Esc，菜单收回按钮
+        document.addEventListener('click', function (e) {
+            if (!navLinks.contains(e.target) && !menuBtn.contains(e.target)) closeMenu();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeMenu();
+        });
+        // 背景滚动或手指滑动时，自动收起菜单（菜单面板内部的滑动不触发）
+        function dismissOnScroll() {
+            if (navLinks.classList.contains('open')) closeMenu();
+        }
+        function dismissOnTouch(e) {
+            if (!navLinks.classList.contains('open')) return;
+            if (navLinks.contains(e.target) || menuBtn.contains(e.target)) return;
+            closeMenu();
+        }
+        window.addEventListener('scroll', dismissOnScroll, true);
+        document.addEventListener('touchmove', dismissOnTouch, { passive: true });
     }
 
     // 4. 滚动出现动画（IntersectionObserver）
